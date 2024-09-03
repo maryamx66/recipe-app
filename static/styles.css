@@ -1,0 +1,188 @@
+:root {
+  background-color: #f0f0f0;
+  font-size: 1.1rem;
+  --primary-color: rgb(0, 78, 0);
+  --secondary-color: #edd8bc;
+  --shadow: -6px 9px 25px -3px rgba(0, 0, 0, 0.1);
+  --title-font: "Caveat", cursive;
+}
+
+@media screen and (max-width: 600px) {
+  :root {
+    font-size: 1rem;
+  }
+}
+
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  padding-bottom: 2rem;
+  font-family: Philosopher, sans-serif;
+}
+
+/* homepage/navbar styles */
+.nav-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.site-header {
+  background-color: var(--primary-color);
+  margin-bottom: 2rem;
+  padding: 1rem;
+}
+
+.nav-bar a {
+  text-decoration: none;
+  color: white;
+}
+
+.site-name {
+  text-align: center;
+  color: var(--secondary-color);
+  padding: 0;
+  margin: 0;
+  margin-bottom: 2rem;
+  font-family: "Kaushan Script", cursive;
+}
+.site-content-container {
+  max-width: 80vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.recipes-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  row-gap: 5rem;
+}
+
+.recipe {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--secondary-color);
+  padding: 2rem;
+  border-radius: 1rem;
+  gap: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.recipe h2 {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  font-family: var(--title-font);
+  font-weight: 700;
+  font-size: 1.75rem;
+}
+
+.button {
+  all: unset; /* Removes all default browser styles */
+  box-sizing: border-box;
+  background-color: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.red-button {
+  background-color: rgb(140, 0, 0);
+}
+
+.form-button {
+  width: 100%;
+}
+
+.card-button {
+  margin-top: auto;
+}
+/* create recipe styles */
+.form-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.form-base {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 400px;
+  margin: auto;
+  background-color: var(--secondary-color);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+input[type="text"],
+textarea,
+select {
+  border-color: var(--primary-color);
+  border-width: 2px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+select {
+  cursor: pointer;
+}
+
+label {
+  color: var(--primary-color);
+}
+
+/* View recipe styles */
+
+.recipe-action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-top: 10rem;
+  align-items: center;
+  justify-content: end;
+}
+
+.view-recipe-container {
+  max-width: 70vw;
+  margin: auto;
+}
+
+.view-recipe-container h2 {
+  font-family: var(--title-font);
+  font-weight: 500;
+  text-align: center;
+  font-size: 3rem;
+  color: var(--secondary-color);
+  -webkit-text-stroke: 1.2px black;
+}
+
+.view-recipe-container ul {
+  line-height: 1.5;
+}
+
+/* for the about us page*/
+
+.about-us {
+  line-height: 1.5;
+}

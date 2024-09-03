@@ -1,0 +1,29 @@
+{% extends "base.html"%} {%block content%}
+<h2 class="form-title">Add a new recipe to your collection:</h2>
+<form method="post" class="form-base">
+  <div class="input-group">
+    <label for="name">Recipe Name:</label>
+    <input type="text" id="name" name="name" />
+  </div>
+  <div class="input-group">
+    <label for="type">Type of Recipe:</label>
+    <select name="type" id="type">
+      <option value="Breakfast">Breakfast</option>
+      <option value="Salad">Salad</option>
+      <option value="Lunch">Lunch</option>
+      <option value="Dinner">Dinner</option>
+      <option value="Dessert">Dessert</option>
+      <option value="Side Dish">Side Dish</option>
+      <option value="Coffee">Coffee</option>
+      <option value="Drinks">Drinks</option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label for="ingredients">Ingredient List:</label>
+    <textarea name="ingredients" id="ingredients" rows="10"></textarea>
+  </div>
+  <div>
+    <button type="submit" class="button form-button">Create Recipe</button>
+  </div>
+</form>
+{%endblock%}

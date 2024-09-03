@@ -1,0 +1,36 @@
+{%extends "base.html"%} {% block content%}
+<div class="view-recipe-container">
+  <h2>{{recipe["name"]}}</h2>
+  <h3>Type of recipe: {{recipe["type"]}}</h3>
+  <p>Ingredients:</p>
+  <ul>
+    {% for ingredient in recipe["ingredients"]%}
+    <li>{{ingredient}}</li>
+    {% endfor%}
+  </ul>
+  <div class="recipe-action-buttons">
+    <a class="button" href="/recipe/{{recipe['_id']}}/edit">Edit recipe</a>
+    <button class="button red-button" onclick="confirmDelete()">
+      Remove Recipe
+    </button>
+  </div>
+</div>
+<!-- java script for the pop up window to confirm removing recipe action  -->
+<script>
+  async function confirmDelete() {
+    if (confirm("Are you sure you want to delete this recipe?")) {
+      // Make post request to delete recipe
+      const response = await fetch("/recipe/{{recipe['_id']}}/delete", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        // Redirect to homepage
+        window.location.href = "/";
+      } else {
+        alert("Failed to delete recipe. Please try again.");
+      }
+    }
+  }
+</script>
+{%endblock%}

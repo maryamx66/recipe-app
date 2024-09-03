@@ -1,0 +1,44 @@
+{% extends "base.html"%} {%block content%}
+<h2 class="form-title">Make changes to your recipe:</h2>
+<form class="form-base" method="post">
+  <div class="input-group">
+    <label for="name">Recipe Name:</label>
+    <input type="text" id="name" name="name" value="{{recipe["name"]}}" />
+  </div>
+  <div class="input-group">
+    <label for="type">Type of Recipe</label>
+    <select name="type" id="type">
+      <option value="Breakfast">Breakfast</option>
+      <option value="Salad">Salad</option>
+      <option value="Lunch">Lunch</option>
+      <option value="Dinner">Dinner</option>
+      <option value="Dessert">Dessert</option>
+      <option value="Side Dish">Side Dish</option>
+      <option value="Coffee">Coffee</option>
+      <option value="Drinks">Drinks</option>
+    </select>
+  </div>
+  <div class="input-group">
+    <label for="ingredients">Ingredient List</label>
+    <!-- using the join method to put new-lines as separators between the ingredients  -->
+    <textarea name="ingredients" id="ingredients" rows="10">
+{{"\n".join(recipe["ingredients"])}}</textarea
+    >
+  </div>
+  <button class="button form-button" type="submit">Update Recipe</button>
+</form>
+
+<script>
+  (() => {
+    const RECIPE_TYPE = "{{recipe['type']}}";
+    const select = document.querySelector("select");
+    const options = select.querySelectorAll("option");
+    for (const option of options) {
+      if (option.value === RECIPE_TYPE) {
+        option.selected = true;
+      }
+    }
+  })();
+</script>
+
+{%endblock%}

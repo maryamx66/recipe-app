@@ -1,6 +1,7 @@
 services:
   app:
-    build: .
+    build:
+      context: .
     restart: unless-stopped
     environment:
       - DATABASE_URL=mongodb://root:supersecure@db:27017

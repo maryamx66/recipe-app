@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=mongodb://root:supersecure@db:27017
+  db:
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=supersecure
+
+# Server-specific config
+networks:
+  default:
+    name: "underme"
+    external: true

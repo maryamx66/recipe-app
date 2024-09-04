@@ -4,7 +4,7 @@
   --primary-color: rgb(0, 78, 0);
   --secondary-color: #edd8bc;
   --shadow: -6px 9px 25px -3px rgba(0, 0, 0, 0.1);
-  --title-font: "Caveat", cursive;
+  --title-font: "Kaushan Script", cursive;
 }
 
 @media screen and (max-width: 600px) {
@@ -52,7 +52,7 @@ body {
   padding: 0;
   margin: 0;
   margin-bottom: 2rem;
-  font-family: "Kaushan Script", cursive;
+  font-family: var(--title-font);
 }
 .site-content-container {
   max-width: 80vw;
@@ -62,7 +62,7 @@ body {
 
 .recipes-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   row-gap: 5rem;
 }
@@ -164,14 +164,15 @@ label {
 }
 
 .view-recipe-container {
-  max-width: 70vw;
+  max-width: 60vw;
   margin: auto;
 }
 
 .view-recipe-container h2 {
   font-family: var(--title-font);
+  /* font-family: "Kaushan Script"; */
   font-weight: 500;
-  text-align: center;
+  text-align: left;
   font-size: 3rem;
   color: var(--secondary-color);
   -webkit-text-stroke: 1.2px black;
@@ -185,4 +186,21 @@ label {
 
 .about-us {
   line-height: 1.5;
+}
+
+.recipe-image {
+  display: inline-block;
+  max-width: 22rem;
+  box-shadow: var(--shadow);
+}
+/*
+.image-container {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+*/
+
+.recipe-card-image {
+  max-width: 100%;
 }

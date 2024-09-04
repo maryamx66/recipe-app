@@ -1,6 +1,6 @@
 {% extends "base.html"%} {%block content%}
 <h2 class="form-title">Make changes to your recipe:</h2>
-<form class="form-base" method="post">
+<form class="form-base" method="post" enctype="multipart/form-data">
   <div class="input-group">
     <label for="name">Recipe Name:</label>
     <input type="text" id="name" name="name" value="{{recipe["name"]}}" />
@@ -25,6 +25,11 @@
 {{"\n".join(recipe["ingredients"])}}</textarea
     >
   </div>
+  <div class="input-group">
+    <span id="uploaded-file-name"></span>
+    <label class="button" for="file">Upload Recipe Photo</label>
+    <input type="file" name="file" id="file" style="display: none" />
+  </div>
   <button class="button form-button" type="submit">Update Recipe</button>
 </form>
 
@@ -38,7 +43,13 @@
         option.selected = true;
       }
     }
+
+    const fileInput = document.getElementById("file");
+    const fileName = document.getElementById("uploaded-file-name");
+
+    fileInput.addEventListener("change", () => {
+      fileName.textContent = `Selected file: ${fileInput.files[0].name}`;
+    });
   })();
 </script>
-
 {%endblock%}

@@ -1,18 +1,44 @@
-from flask import Flask, send_file, render_template, redirect
+from flask import Flask, render_template, redirect
 from bson.objectid import ObjectId
 from models.db import get_db
 from flask import request
 from flask import url_for
+from flask import send_from_directory
+
+from werkzeug.utils import secure_filename
 from flask_basicauth import BasicAuth
+import os
+
+UPLOAD_FOLDER = './uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
-db = get_db()
 
-app.config['BASIC_AUTH_USERNAME'] = "gojo satoru"
-app.config['BASIC_AUTH_PASSWORD'] = "special grade"
+# App/Flask configuration
+app.config['BASIC_AUTH_USERNAME'] = "gojo"
+app.config['BASIC_AUTH_PASSWORD'] = "strongest"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+db = get_db()
 
 # TODO: Proper authentication
 basic_auth = BasicAuth(app)
+
+def get_file_extension(filename):
+    return filename.rsplit('.', 1)[1].lower()
+
+# Returns true if filename has an extension in ALLOWED_EXTENSIONS
+def allowed_file(filename):
+    return ('.' in filename) and \
+           get_file_extension(filename) in ALLOWED_EXTENSIONS
+
+def generate_random_filename(filename):
+    # Returns a random filename with the same extension as filename
+    return str(ObjectId()) + "." + get_file_extension(filename)
+
+@app.route('/uploads/<name>')
+def download_file(name):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 # Home page
 # Lists all recipes and renders `templates/home-page.html`
@@ -21,6 +47,7 @@ def home_page():
     recipes = db["recipes"]
     result = recipes.find()
     return render_template("home-page.html", recipes=result)
+
 
 @app.route("/about-us")
 def about_us():
@@ -41,11 +68,18 @@ def view_recipe(id):
 @basic_auth.required
 def create_recipe():
     if request.method == "POST":
+        file = request.files['file']
+        saved_filename = generate_random_filename(secure_filename(file.filename))
+        file_exists = file.filename != ""
+        if file_exists and allowed_file(file.filename):
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], saved_filename))
+        
         data = request.form
         result = db["recipes"].insert_one({
             "name": data["name"], 
             "type": data["type"], 
-            "ingredients": data["ingredients"].split("\n")
+            "ingredients": data["ingredients"].split("\n"),
+            "image": saved_filename
         })
         return redirect(url_for("view_recipe", id = result.inserted_id))
          
@@ -71,6 +105,13 @@ def edit_recipe(id):
     if request.method == "GET":
         return render_template("edit-recipe.html", recipe=recipe)
 
+    # Check if a file was uploaded
+    file = request.files['file']
+    saved_filename = generate_random_filename(secure_filename(file.filename)) # ""
+    file_exists = file.filename != ""
+    if file_exists and allowed_file(file.filename):
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], saved_filename))
+
 
     data = request.form
     # modified_result is not used for now. It will be when we implement error handling.
@@ -78,12 +119,14 @@ def edit_recipe(id):
         {"_id": ObjectId(id)},
         {
             "$set": {
-                 "name": data["name"], 
+                "name": data["name"], 
                 "type": data["type"], 
-                "ingredients": data["ingredients"].split("\n")
+                "ingredients": data["ingredients"].split("\n"),
+                "image": saved_filename if file_exists else recipe["image"]
             }
         }
     )
+    
     return redirect(url_for("view_recipe", id = id))
 
     

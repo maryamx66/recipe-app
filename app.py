@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, session
 from bson.objectid import ObjectId
-from models.db import get_db
+from models.db import get_db, get_client
 from flask import request
 from flask import url_for
 from flask import send_from_directory
+from flask_session import Session 
 
 from werkzeug.utils import secure_filename
 from flask_basicauth import BasicAuth
@@ -13,27 +14,34 @@ UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
+db = get_db()
 
 # App/Flask configuration
 app.config['BASIC_AUTH_USERNAME'] = "gojo"
 app.config['BASIC_AUTH_PASSWORD'] = "strongest"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-db = get_db()
+app.config['SESSION_TYPE'] = "mongodb"
+app.config['SESSION_MONGODB'] = get_client()
+Session(app)
 
 # TODO: Proper authentication
 basic_auth = BasicAuth(app)
 
 def get_file_extension(filename):
     return filename.rsplit('.', 1)[1].lower()
+    
 
 # Returns true if filename has an extension in ALLOWED_EXTENSIONS
 def allowed_file(filename):
     return ('.' in filename) and \
            get_file_extension(filename) in ALLOWED_EXTENSIONS
 
+# Returns a random filename with the same extension as filename:
 def generate_random_filename(filename):
-    # Returns a random filename with the same extension as filename
+    # If filename is empty, return empty string
+    if filename == "":
+        return ""
+    # Default case
     return str(ObjectId()) + "." + get_file_extension(filename)
 
 @app.route('/uploads/<name>')
@@ -129,6 +137,16 @@ def edit_recipe(id):
     
     return redirect(url_for("view_recipe", id = id))
 
-    
-    
+# #! FOR TESTING
+# @app.route('/set/')
+# def set():
+#     session['user'] = 'gojo satoru'
+#     return 'ok'
+
+# @app.route('/get/')
+# def get():
+#     return session.get('user', 'not set')
  
+# @app.route("/register", methods = ["POST", "GET"])
+# def register():
+#     return render_template("auth/register.html")

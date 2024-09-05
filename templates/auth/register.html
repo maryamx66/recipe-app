@@ -1,0 +1,13 @@
+{% extends "base.html"%} {%block content%}
+
+<h2>Enter your info below:</h2>
+
+<form action="post">
+  <label for="username">Email: </label>
+  <input type="text" id="username" name="username" />
+  <label for="password">Password: </label>
+  <input type="password" name="password" id="password" />
+  <button type="submit">Register</button>
+</form>
+
+{%endblock%}

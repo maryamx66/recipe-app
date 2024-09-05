@@ -190,6 +190,7 @@ label {
 
 .recipe-image {
   display: inline-block;
+  width: 100%;
   max-width: 22rem;
   box-shadow: var(--shadow);
 }

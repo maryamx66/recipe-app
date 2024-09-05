@@ -2,6 +2,7 @@ services:
   app:
     build:
       context: .
+    pull_policy: build
     restart: unless-stopped
     environment:
       - DATABASE_URL=mongodb://root:supersecure@db:27017
@@ -20,7 +21,7 @@ volumes:
   data:
   uploads:
 
-# Server-specific config
+    # Server-specific config
 networks:
   default:
     name: "underme"

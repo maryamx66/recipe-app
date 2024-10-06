@@ -1,19 +1,18 @@
 {% extends "base.html"%} {%block content%}
 
-<h2 class="form-title">Enter your info below:</h2>
 <p style="color: red">{{error}}</p>
 
-<form class="form-base" method="post">
+<h2 class="form-title">Enter your email and password below:</h2>
+<form class="form-base" method="POST">
   <div class="input-group">
     <label for="username">Email: </label>
     <input type="email" id="username" name="email" />
   </div>
-
   <div class="input-group">
     <label for="password">Password: </label>
     <input type="password" name="password" id="password" />
   </div>
-  <button class="button form-button" type="submit">Register</button>
+  <button class="button form-button" type="submit">Log in</button>
 </form>
 
 {%endblock%}

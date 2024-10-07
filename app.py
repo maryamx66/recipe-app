@@ -1,13 +1,11 @@
-from flask import Flask, render_template, redirect, session
+from flask import Flask, render_template, redirect
 from bson.objectid import ObjectId
 from models.db import get_db, get_client
 from flask import request
 from flask import url_for
 from flask import send_from_directory
 from flask_session import Session 
-from bcrypt import hashpw, checkpw, gensalt
-from pymongo.errors import DuplicateKeyError
-from flask import flash
+from views.auth import auth_blueprint
 
 from werkzeug.utils import secure_filename
 from flask_basicauth import BasicAuth
@@ -30,6 +28,9 @@ Session(app)
 
 # TODO: Proper authentication
 basic_auth = BasicAuth(app)
+
+# Blueprints
+app.register_blueprint(auth_blueprint)
 
 def get_file_extension(filename):
     return filename.rsplit('.', 1)[1].lower()
@@ -141,66 +142,5 @@ def edit_recipe(id):
     
     return redirect(url_for("view_recipe", id = id))
 
-##################
-## AUTH ROUTES ##
-################
-
-### TODO: Password reset ###
-### TODO: Password validation ###
-### TODO: Email validation ###
-
-def is_logged_in():
-    if session.get("user", None):
-        return True
-    else:
-        return False
- 
-@app.route("/auth/register", methods = ["POST", "GET"])
-def register():
-    if is_logged_in():
-        return redirect("/")
-    # POST method handling
-    if request.method == "POST":
-        submitted_data = request.form
-        try:
-            user_data = db["users"].insert_one({
-                "email": submitted_data["email"],
-                "password": hashpw(password=str(submitted_data["password"]).encode(), salt=gensalt()),
-            })
-            
-            session["user"] = str(user_data.inserted_id)
-            flash("You were registered successfully!")
-            return redirect("/")
-        except DuplicateKeyError:
-            return render_template("auth/register.html", error = "Email is already taken!")
-            
-    # GET Method handling
-    else:
-        return render_template("auth/register.html")
-    
-@app.route("/auth/login", methods = ["POST", "GET"])
-def login(): 
-    if is_logged_in():
-        return redirect("/")
-    if request.method == "POST":
-        submitted_data = request.form
-        
-        user_data = db["users"].find_one(
-            {"email": submitted_data["email"]}
-        )
-
-        # If user doesn't exist (email incorrect) OR password is incorrect
-        if user_data == None or not checkpw(str(submitted_data["password"]).encode(), user_data["password"]):
-            return render_template("auth/login.html", error = "Email or password is incorrect!")
-        
-        session["user"] = str(user_data["_id"])
-        flash("Welcome back!")
-        return redirect("/")
-    else:
-        return render_template("auth/login.html")
 
 
-@app.route("/auth/logout")
-def logout():
-    session.clear()
-    return redirect("/")

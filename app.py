@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, flash, render_template, redirect
 from bson.objectid import ObjectId
 from models.db import get_db, get_client
 from flask import request
@@ -6,6 +6,7 @@ from flask import url_for
 from flask import send_from_directory
 from flask_session import Session 
 from views.auth import auth_blueprint
+from flask import session, flash
 
 from werkzeug.utils import secure_filename
 from flask_basicauth import BasicAuth
@@ -34,7 +35,7 @@ app.register_blueprint(auth_blueprint)
 
 def get_file_extension(filename):
     return filename.rsplit('.', 1)[1].lower()
-    
+
 
 # Returns true if filename has an extension in ALLOWED_EXTENSIONS
 def allowed_file(filename):
@@ -78,8 +79,13 @@ def view_recipe(id):
 # Renders `templates/create-recipe.html` if GET method
 # Adds recipe to db and redirects to /recipe/<id> if POST method 
 @app.route("/recipe/create", methods = ["get", "post"])
-@basic_auth.required
+# @basic_auth.required
 def create_recipe():
+    current_user_id = session.get("user", None)
+    if current_user_id == None:
+        flash("You must be logged in to create a recipe!")
+        return redirect("/auth/login")
+    
     if request.method == "POST":
         file = request.files['file']
         saved_filename = generate_random_filename(secure_filename(file.filename))
@@ -87,8 +93,10 @@ def create_recipe():
         if file_exists and allowed_file(file.filename):
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], saved_filename))
         
+
         data = request.form
         result = db["recipes"].insert_one({
+            "user_id": current_user_id,
             "name": data["name"], 
             "type": data["type"], 
             "ingredients": data["ingredients"].split("\n"),
@@ -101,8 +109,19 @@ def create_recipe():
 # Delete recipe with id <id>
 # Doesn't render any template. Redirects to home page.
 @app.route("/recipe/<id>/delete", methods = ["post"] )
-@basic_auth.required
+# @basic_auth.required
 def delete_recipe(id):
+    current_user_id = session.get("user", None)
+
+    if current_user_id == None:
+        flash("You must be logged in to edit a recipe!")
+        return redirect("/auth/login")
+    
+    recipe = db["recipes"].find_one({"_id": ObjectId(id)})
+    if current_user_id != recipe["user_id"]:
+        flash("You cannot delete this recipe!")
+        return redirect(f"/recipe/{id}")
+
     db["recipes"].delete_one({"_id": ObjectId(id)})
     return redirect("/")
 
@@ -110,11 +129,19 @@ def delete_recipe(id):
 # Renders form with existing recipe data pre-filled if GET method
 # Edits existing recipe with submitted form data if POST method
 @app.route("/recipe/<id>/edit", methods = ["get", "post"])
-@basic_auth.required
+# @basic_auth.required
 def edit_recipe(id):
+    current_user_id = session.get("user", None)
+    if current_user_id == None:
+        flash("You must be logged in to edit a recipe!")
+        return redirect("/auth/login")
+    
     recipe = db["recipes"].find_one({"_id": ObjectId(id)})
     if recipe == None:
         return ("Recipe does not exist.", 404)
+    if current_user_id != recipe["user_id"]:
+        flash("You cannot edit this recipe!")
+        return redirect(f"/recipe/{id}")
     if request.method == "GET":
         return render_template("edit-recipe.html", recipe=recipe)
 
@@ -141,6 +168,3 @@ def edit_recipe(id):
     )
     
     return redirect(url_for("view_recipe", id = id))
-
-
-

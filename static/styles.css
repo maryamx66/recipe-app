@@ -35,6 +35,12 @@ body {
   gap: 2rem;
 }
 
+@media screen and (max-width: 600px) {
+  .nav-bar {
+    flex-direction: column;
+  }
+}
+
 .site-header {
   background-color: var(--primary-color);
   margin-bottom: 2rem;

@@ -3,11 +3,14 @@ from flask import Blueprint, flash, redirect, render_template, request, session
 from pymongo.errors import DuplicateKeyError
 from models.db import get_db
 
+
 auth_blueprint = Blueprint("auth_blueprint" ,__name__, template_folder= "templates")
 db = get_db()
 ### TODO: Password reset ###
 ### TODO: Password validation ###
 ### TODO: Email validation ###
+
+EMAIL_REGEX = r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$'
 
 def is_logged_in():
     if session.get("user", None):

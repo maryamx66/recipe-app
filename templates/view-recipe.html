@@ -17,13 +17,14 @@
     <li>{{ingredient}}</li>
     {% endfor%}
   </ul>
-
+  {%if session.get("user", None) == recipe["user_id"]%}
   <div class="recipe-action-buttons">
     <a class="button" href="/recipe/{{recipe['_id']}}/edit">Edit recipe</a>
     <button class="button red-button" onclick="confirmDelete()">
       Remove Recipe
     </button>
   </div>
+  {%endif%}
 </div>
 <!-- javascript for the pop up window to confirm removing recipe action  -->
 <script>
@@ -34,7 +35,7 @@
         method: "POST",
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         // Redirect to homepage
         window.location.href = "/";
       } else {

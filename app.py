@@ -9,7 +9,6 @@ from views.auth import auth_blueprint
 from flask import session, flash
 
 from werkzeug.utils import secure_filename
-from flask_basicauth import BasicAuth
 import os
 
 UPLOAD_FOLDER = './uploads'
@@ -19,16 +18,10 @@ app = Flask(__name__)
 db = get_db()
 
 db.users.create_index("email", unique = True)
-# App/Flask configuration
-app.config['BASIC_AUTH_USERNAME'] = "gojo"
-app.config['BASIC_AUTH_PASSWORD'] = "strongest"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SESSION_TYPE'] = "mongodb"
 app.config['SESSION_MONGODB'] = get_client()
 Session(app)
-
-# TODO: Proper authentication
-basic_auth = BasicAuth(app)
 
 # Blueprints
 app.register_blueprint(auth_blueprint)
@@ -79,7 +72,6 @@ def view_recipe(id):
 # Renders `templates/create-recipe.html` if GET method
 # Adds recipe to db and redirects to /recipe/<id> if POST method 
 @app.route("/recipe/create", methods = ["get", "post"])
-# @basic_auth.required
 def create_recipe():
     current_user_id = session.get("user", None)
     if current_user_id == None:
@@ -109,7 +101,6 @@ def create_recipe():
 # Delete recipe with id <id>
 # Doesn't render any template. Redirects to home page.
 @app.route("/recipe/<id>/delete", methods = ["post"] )
-# @basic_auth.required
 def delete_recipe(id):
     current_user_id = session.get("user", None)
 
@@ -129,7 +120,6 @@ def delete_recipe(id):
 # Renders form with existing recipe data pre-filled if GET method
 # Edits existing recipe with submitted form data if POST method
 @app.route("/recipe/<id>/edit", methods = ["get", "post"])
-# @basic_auth.required
 def edit_recipe(id):
     current_user_id = session.get("user", None)
     if current_user_id == None:

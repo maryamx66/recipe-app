@@ -2,15 +2,12 @@ from bcrypt import hashpw, gensalt, checkpw
 from flask import Blueprint, flash, redirect, render_template, request, session
 from pymongo.errors import DuplicateKeyError
 from models.db import get_db
-
+import re
 
 auth_blueprint = Blueprint("auth_blueprint" ,__name__, template_folder= "templates")
 db = get_db()
-### TODO: Password reset ###
-### TODO: Password validation ###
-### TODO: Email validation ###
 
-EMAIL_REGEX = r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$'
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 def is_logged_in():
     if session.get("user", None):
@@ -26,6 +23,10 @@ def register():
     if request.method == "POST":
         submitted_data = request.form
         try:
+            if not EMAIL_REGEX.match(submitted_data["email"]):
+                return render_template("auth/register.html", error = "Email is not valid!")
+            if len(submitted_data["password"]) < 8:
+                return render_template("auth/register.html", error = "Password must be no less than 8 characters!")
             user_data = db["users"].insert_one({
                 "email": submitted_data["email"],
                 "password": hashpw(password=str(submitted_data["password"]).encode(), salt=gensalt()),

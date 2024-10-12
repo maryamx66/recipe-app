@@ -144,8 +144,7 @@ def edit_recipe(id):
 
 
     data = request.form
-    # modified_result is not used for now. It will be when we implement error handling.
-    modified_result = db["recipes"].update_one(
+    db["recipes"].update_one(
         {"_id": ObjectId(id)},
         {
             "$set": {

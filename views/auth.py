@@ -18,7 +18,7 @@ def is_logged_in():
 @auth_blueprint.route("/auth/register", methods = ["POST", "GET"])
 def register():
     if is_logged_in():
-        return redirect("/")
+        return redirect("/auth/profile")
     # POST method handling
     if request.method == "POST":
         submitted_data = request.form
@@ -34,7 +34,7 @@ def register():
             
             session["user"] = str(user_data.inserted_id)
             flash("You were registered successfully!")
-            return redirect("/")
+            return redirect("/auth/profile")
         except DuplicateKeyError:
             return render_template("auth/register.html", error = "Email is already taken!")
             
@@ -45,7 +45,7 @@ def register():
 @auth_blueprint.route("/auth/login", methods = ["POST", "GET"])
 def login(): 
     if is_logged_in():
-        return redirect("/")
+        return redirect("/auth/profile")
     if request.method == "POST":
         submitted_data = request.form
         
@@ -59,7 +59,7 @@ def login():
         
         session["user"] = str(user_data["_id"])
         flash("Welcome back!")
-        return redirect("/")
+        return redirect("/auth/profile")
     else:
         return render_template("auth/login.html")
 

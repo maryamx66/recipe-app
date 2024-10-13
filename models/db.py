@@ -11,4 +11,5 @@ def get_db():
     db = client["recipe-app"]
     return db
 
-
+client = get_client()
+db = get_db()

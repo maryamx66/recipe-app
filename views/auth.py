@@ -1,11 +1,11 @@
 from bcrypt import hashpw, gensalt, checkpw
 from flask import Blueprint, flash, redirect, render_template, request, session
 from pymongo.errors import DuplicateKeyError
-from models.db import get_db
+from models.db import db
 import re
 
 auth_blueprint = Blueprint("auth_blueprint" ,__name__, template_folder= "templates")
-db = get_db()
+
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
@@ -18,7 +18,7 @@ def is_logged_in():
 @auth_blueprint.route("/auth/register", methods = ["POST", "GET"])
 def register():
     if is_logged_in():
-        return redirect("/")
+        return redirect("/auth/profile")
     # POST method handling
     if request.method == "POST":
         submitted_data = request.form
@@ -34,7 +34,7 @@ def register():
             
             session["user"] = str(user_data.inserted_id)
             flash("You were registered successfully!")
-            return redirect("/")
+            return redirect("/auth/profile")
         except DuplicateKeyError:
             return render_template("auth/register.html", error = "Email is already taken!")
             
@@ -45,7 +45,7 @@ def register():
 @auth_blueprint.route("/auth/login", methods = ["POST", "GET"])
 def login(): 
     if is_logged_in():
-        return redirect("/")
+        return redirect("/auth/profile")
     if request.method == "POST":
         submitted_data = request.form
         
@@ -59,7 +59,7 @@ def login():
         
         session["user"] = str(user_data["_id"])
         flash("Welcome back!")
-        return redirect("/")
+        return redirect("/auth/profile")
     else:
         return render_template("auth/login.html")
 
@@ -68,3 +68,15 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+
+@auth_blueprint.route("/auth/profile")
+def profile():
+    if not is_logged_in():
+        flash("Please log in first!")
+        return redirect("/auth/login")
+    user_id = session.get("user")
+    user_recipes = db["recipes"].find({"user_id": user_id})
+    user_recipes = list(user_recipes)
+    return render_template("auth/profile.html", recipes = user_recipes)
+    

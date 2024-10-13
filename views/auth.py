@@ -68,3 +68,15 @@ def login():
 def logout():
     session.clear()
     return redirect("/")
+
+
+@auth_blueprint.route("/auth/profile")
+def profile():
+    if not is_logged_in():
+        flash("Please log in first!")
+        return redirect("/auth/login")
+    user_id = session.get("user")
+    user_recipes = db["recipes"].find({"user_id": user_id})
+    user_recipes = list(user_recipes)
+    return render_template("auth/profile.html", recipes = user_recipes)
+    

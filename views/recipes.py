@@ -78,7 +78,7 @@ def create_recipe():
             "ingredients": data["ingredients"].split("\n"),
             "image": saved_filename
         })
-        return redirect(url_for("view_recipe", id = result.inserted_id))
+        return redirect(url_for("recipes_blueprint.view_recipe", id = result.inserted_id))
          
     return render_template("create-recipe.html")
 

@@ -3,10 +3,8 @@ from bson import ObjectId
 from flask import flash, redirect, render_template, request, send_from_directory, session, url_for, Blueprint, current_app
 from werkzeug.utils import secure_filename
 from models import db
-from models.db import get_db
+from models.db import db
 
-
-db = get_db()
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 recipes_blueprint = Blueprint("recipes_blueprint", __name__, template_folder= "templates")

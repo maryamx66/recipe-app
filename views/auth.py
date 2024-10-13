@@ -1,11 +1,11 @@
 from bcrypt import hashpw, gensalt, checkpw
 from flask import Blueprint, flash, redirect, render_template, request, session
 from pymongo.errors import DuplicateKeyError
-from models.db import get_db
+from models.db import db
 import re
 
 auth_blueprint = Blueprint("auth_blueprint" ,__name__, template_folder= "templates")
-db = get_db()
+
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 

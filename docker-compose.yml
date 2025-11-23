@@ -2,14 +2,16 @@ services:
   app:
     build:
       context: .
+    container_name: recipes_app
     pull_policy: build
     restart: unless-stopped
     environment:
-      - DATABASE_URL=mongodb://root:supersecure@db:27017
+      - DATABASE_URL=mongodb://root:supersecure@recipes_db:27017
     volumes:
       - uploads:/app/uploads
   db:
-    image: mongo
+    image: mongo:7.0.26
+    container_name: recipes_db
     restart: unless-stopped
     volumes:
       - data:/data/db
